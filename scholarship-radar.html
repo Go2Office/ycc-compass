@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scholarship Radar — YCC Compass</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14213D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EEF1F5;
+    --paper-raised: #FFFFFF;
+    --ink: #101B33;
+    --ink-soft: #4B5876;
+    --navy: #14213D;
+    --gold: #B9862F;
+    --gold-soft: #F1E4C8;
+    --emerald: #1F6E52;
+    --emerald-soft: #DCEEE5;
+    --amber: #B8791F;
+    --amber-soft: #F5E7CC;
+    --red: #9C3B2E;
+    --red-soft: #F5DEDB;
+    --line: #D6DBE4;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --paper: #0E1524; --paper-raised: #161F35; --ink: #E9ECF4; --ink-soft: #A3ADC6;
+      --navy: #E9ECF4; --gold: #D9A84D; --gold-soft: #2A2416;
+      --emerald: #4CAE8A; --emerald-soft: #16241F;
+      --amber: #D9A84D; --amber-soft: #2A2416;
+      --red: #C25B4B; --red-soft: #2C1B18; --line: #2A3552;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0E1524; --paper-raised: #161F35; --ink: #E9ECF4; --ink-soft: #A3ADC6;
+    --navy: #E9ECF4; --gold: #D9A84D; --gold-soft: #2A2416;
+    --emerald: #4CAE8A; --emerald-soft: #16241F;
+    --amber: #D9A84D; --amber-soft: #2A2416;
+    --red: #C25B4B; --red-soft: #2C1B18; --line: #2A3552;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; color: var(--ink); }
+  p { margin: 0; color: var(--ink-soft); line-height: 1.5; }
+  button, input, select { font-family: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  header.site { border-bottom: 1px solid var(--line); background: var(--paper-raised); }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; max-width: 1180px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 9px; }
+  .brand-mark { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .brand-mark svg { width: 14px; height: 14px; }
+  .brand-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.02rem; }
+  .brand-name .thin { font-weight: 400; color: var(--ink-soft); }
+  .crumb { font-size: 0.85rem; color: var(--ink-soft); margin-left: 16px; padding-left: 16px; border-left: 1px solid var(--line); }
+  .user-chip { display: flex; align-items: center; gap: 9px; font-size: 0.86rem; font-weight: 600; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-soft); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; }
+
+  .page-head { padding: 34px 0 0; }
+  .page-head h1 { font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 600; }
+  .page-head p { margin-top: 8px; font-size: 0.98rem; max-width: 60ch; }
+
+  .profile-banner {
+    margin-top: 22px; background: var(--paper-raised); border: 1px solid var(--line); border-radius: 6px;
+    padding: 16px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .profile-banner .label { font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .profile-chip { font-size: 0.82rem; font-weight: 600; background: var(--emerald-soft); color: var(--emerald); padding: 5px 12px; border-radius: 999px; }
+  .profile-banner a { margin-left: auto; font-size: 0.82rem; font-weight: 600; color: var(--gold); text-decoration: none; white-space: nowrap; }
+
+  .radar-summary { display: flex; gap: 22px; margin-top: 20px; flex-wrap: wrap; }
+  .summary-stat { font-size: 0.85rem; color: var(--ink-soft); }
+  .summary-stat b { color: var(--ink); font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 600; }
+  .summary-dot { color: var(--emerald); }
+
+  .tabs-row { display: flex; align-items: center; justify-content: space-between; margin-top: 30px; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 12px; }
+  .tabs { display: flex; gap: 4px; }
+  .tab-btn { background: none; border: none; padding: 11px 4px; margin-right: 22px; font-size: 0.92rem; font-weight: 600; color: var(--ink-soft); cursor: pointer; border-bottom: 2px solid transparent; position: relative; top: 1px; }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--gold); }
+  .tab-count { font-size: 0.72rem; background: var(--line); color: var(--ink-soft); padding: 1px 6px; border-radius: 999px; margin-left: 5px; }
+  .view-controls { display: flex; gap: 8px; padding-bottom: 8px; }
+  .sort-select { border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink); font-size: 0.82rem; padding: 7px 10px; border-radius: 4px; }
+
+  .layout { display: grid; grid-template-columns: 230px 1fr; gap: 30px; margin-top: 26px; padding-bottom: 60px; align-items: start; }
+  @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } }
+
+  .filters { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 6px; padding: 20px; position: sticky; top: 20px; }
+  .filter-group { margin-bottom: 22px; }
+  .filter-group:last-child { margin-bottom: 0; }
+  .filter-group h4 { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em; color: var(--ink-soft); margin-bottom: 10px; }
+  .filter-opt { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; padding: 5px 0; cursor: pointer; }
+  .filter-opt input { accent-color: var(--emerald); }
+  .filter-opt.disabled { opacity: 0.4; }
+
+  .feed { display: flex; flex-direction: column; gap: 14px; }
+
+  .card {
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .card-top { display: flex; justify-content: space-between; gap: 16px; }
+  .tag-row { display: flex; gap: 6px; align-items: center; margin-bottom: 9px; flex-wrap: wrap; }
+  .tag { font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 3px; letter-spacing: 0.02em; }
+  .tag.country { background: var(--paper); color: var(--ink-soft); border: 1px solid var(--line); }
+  .tag.fund-full { background: var(--emerald-soft); color: var(--emerald); }
+  .tag.fund-partial { background: var(--amber-soft); color: var(--amber); }
+  .tag.new { background: var(--navy); color: var(--paper); }
+  .card h3 { font-size: 1.08rem; font-weight: 600; }
+  .card .provider { font-size: 0.82rem; color: var(--ink-soft); margin-top: 3px; }
+  .card .desc { font-size: 0.88rem; margin-top: 9px; max-width: 62ch; }
+
+  .match-ring { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+  .match-ring svg { transform: rotate(-90deg); }
+  .match-ring .pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 600; font-size: 0.95rem; color: var(--ink); }
+
+  .card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); flex-wrap: wrap; gap: 12px; }
+  .deadline-block { flex: 1; min-width: 180px; }
+  .deadline-label { font-size: 0.78rem; color: var(--ink-soft); display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .deadline-label b { color: var(--ink); font-weight: 600; }
+  .deadline-bar { height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .deadline-fill { height: 100%; border-radius: 3px; }
+  .deadline-fill.ok { background: var(--emerald); }
+  .deadline-fill.soon { background: var(--amber); }
+  .deadline-fill.urgent { background: var(--red); }
+
+  .card-actions { display: flex; gap: 8px; align-items: center; }
+  .icon-btn { border: 1px solid var(--line); background: var(--paper-raised); width: 34px; height: 34px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink-soft); }
+  .icon-btn.saved { color: var(--gold); border-color: var(--gold); }
+  .btn { font-weight: 600; font-size: 0.84rem; padding: 8px 16px; border-radius: 4px; border: 1px solid var(--navy); background: var(--navy); color: var(--paper); cursor: pointer; text-decoration: none; }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+
+  .match-detail {
+    margin-top: 14px; background: var(--paper); border-radius: 5px; padding: 14px 16px;
+    display: none;
+  }
+  .match-detail.open { display: block; }
+  .match-detail .why { font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; letter-spacing: 0.02em; }
+  .match-line { display: flex; gap: 8px; font-size: 0.85rem; padding: 4px 0; }
+  .match-line.yes { color: var(--ink); }
+  .match-line.yes .ico { color: var(--emerald); }
+  .match-line.no { color: var(--ink-soft); }
+  .match-line.no .ico { color: var(--red); }
+  .premium-note { margin-top: 10px; font-size: 0.78rem; color: var(--ink-soft); font-style: italic; }
+  .ad-slot {
+    border: 1px dashed var(--line); border-radius: 4px; background: var(--paper-raised);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    color: var(--ink-soft); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em;
+    padding: 14px; min-height: 90px;
+  }
+  .ad-slot .ad-tag { font-size: 0.65rem; font-weight: 700; color: var(--ink-soft); opacity: 0.6; display: block; margin-bottom: 4px; }
+
+  .toggle-match { background: none; border: none; color: var(--gold); font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 0; margin-top: 12px; }
+
+  .digest-card {
+    margin-top: 8px; background: var(--navy); border-radius: 6px; padding: 24px 26px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .digest-card h3 { color: #F5F6FA; font-size: 1.1rem; }
+  .digest-card p { color: #AFB9CF; font-size: 0.86rem; margin-top: 5px; }
+  .digest-card .btn { background: var(--gold); border-color: var(--gold); color: var(--navy); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="nav">
+    <div style="display:flex; align-items:center;">
+      <div class="brand">
+        <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3L3 12l9 9 9-9-9-9z" stroke="#EEF1F5" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.4" fill="#EEF1F5"/></svg></div>
+        <span class="brand-name">YCC <span class="thin">Compass</span></span>
+      </div>
+      <span class="crumb">Scholarship Radar</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:20px;">
+      <a href="index.html" style="font-size:0.85rem; font-weight:600; color:var(--ink-soft); text-decoration:none;">Marketplace</a>
+      <a href="about-ycc.html" style="font-size:0.85rem; font-weight:600; color:var(--ink-soft); text-decoration:none;">About YCC</a>
+      <a href="privacy-policy.html" style="font-size:0.85rem; font-weight:600; color:var(--ink-soft); text-decoration:none;">Privacy</a>
+      <div class="user-chip"><div class="avatar">PS</div> Priya S.</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>Scholarship Radar</h1>
+    <p>Every scholarship worth your time, ranked against your own profile — not just a list, a shortlist.</p>
+  </div>
+
+  <div class="profile-banner">
+    <span class="label">Matched to your profile</span>
+    <span class="profile-chip">Postgraduate</span>
+    <span class="profile-chip">Data Science</span>
+    <span class="profile-chip">UK · Germany · Netherlands</span>
+    <span class="profile-chip">IELTS 7.0</span>
+    <a href="#">Edit profile</a>
+  </div>
+
+  <div class="radar-summary">
+    <span class="summary-stat"><span class="summary-dot">●</span> <b>6</b> new this week</span>
+    <span class="summary-stat"><b>3</b> closing within 14 days</span>
+    <span class="summary-stat"><b>41</b> open scholarships match your filters</span>
+  </div>
+
+  <div class="tabs-row">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="for-you">For You <span class="tab-count">12</span></button>
+      <button class="tab-btn" data-tab="all">All Scholarships <span class="tab-count">41</span></button>
+      <button class="tab-btn" data-tab="closing">Closing Soon <span class="tab-count">3</span></button>
+      <button class="tab-btn" data-tab="saved">Saved <span class="tab-count">2</span></button>
+    </div>
+    <div class="view-controls">
+      <select class="sort-select">
+        <option>Sort: Best match</option>
+        <option>Sort: Deadline (soonest)</option>
+        <option>Sort: Newest added</option>
+        <option>Sort: Funding amount</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="filters">
+      <div class="filter-group">
+        <h4>COUNTRY</h4>
+        <label class="filter-opt"><input type="checkbox" checked> United Kingdom</label>
+        <label class="filter-opt"><input type="checkbox" checked> Germany</label>
+        <label class="filter-opt"><input type="checkbox" checked> Netherlands</label>
+        <label class="filter-opt"><input type="checkbox"> United States</label>
+        <label class="filter-opt"><input type="checkbox"> France</label>
+      </div>
+      <div class="filter-group">
+        <h4>STUDY LEVEL</h4>
+        <label class="filter-opt"><input type="checkbox" checked> Postgraduate</label>
+        <label class="filter-opt"><input type="checkbox"> Undergraduate</label>
+        <label class="filter-opt"><input type="checkbox"> Research / PhD</label>
+      </div>
+      <div class="filter-group">
+        <h4>FUNDING TYPE</h4>
+        <label class="filter-opt"><input type="checkbox" checked> Full funding</label>
+        <label class="filter-opt"><input type="checkbox" checked> Partial / tuition only</label>
+      </div>
+      <div class="filter-group">
+        <h4>DEADLINE</h4>
+        <label class="filter-opt"><input type="checkbox"> Closing in 14 days</label>
+        <label class="filter-opt"><input type="checkbox" checked> Next 3 months</label>
+        <label class="filter-opt"><input type="checkbox"> Opens later</label>
+      </div>
+    </aside>
+
+    <div class="feed">
+
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="tag-row">
+              <span class="tag country">🇩🇪 Germany</span>
+              <span class="tag fund-full">Full funding</span>
+              <span class="tag new">NEW</span>
+            </div>
+            <h3>DAAD Study Scholarships for Postgraduates</h3>
+            <div class="provider">German Academic Exchange Service (DAAD)</div>
+            <p class="desc">Covers tuition, monthly stipend and travel for postgraduate study in Germany across STEM and social science fields.</p>
+          </div>
+          <div class="match-ring">
+            <svg width="56" height="56" viewBox="0 0 56 56">
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--line)" stroke-width="5"/>
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-dasharray="150.8" stroke-dashoffset="19.6" stroke-linecap="round"/>
+            </svg>
+            <div class="pct">87%</div>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="deadline-block">
+            <div class="deadline-label"><span>Closes in <b>26 days</b></span><span>12 Oct 2026</span></div>
+            <div class="deadline-bar"><div class="deadline-fill soon" style="width:62%"></div></div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn saved" title="Saved">★</button>
+            <a href="#" class="btn ghost">View details</a>
+          </div>
+        </div>
+        <button class="toggle-match" data-target="m1">Why does this match me? ▾</button>
+        <div class="match-detail" id="m1">
+          <div class="why">MATCH BREAKDOWN</div>
+          <div class="match-line yes"><span class="ico">✓</span> Postgraduate level — matches your profile</div>
+          <div class="match-line yes"><span class="ico">✓</span> Data Science accepted under STEM fields</div>
+          <div class="match-line yes"><span class="ico">✓</span> IELTS 7.0 clears the 6.5 minimum requirement</div>
+          <div class="match-line no"><span class="ico">–</span> Motivation letter in German is preferred but not required for English-taught programmes</div>
+          <div class="premium-note">Full eligibility breakdown and letter guidance — Premium</div>
+        </div>
+      </div>
+
+      <!-- AD SLOT: native in-feed ad. Replace with your ad network's in-feed unit.
+           Hide entirely for logged-in Premium subscribers. -->
+      <div class="ad-slot">
+        <div><span class="ad-tag">ADVERTISEMENT</span>In-feed ad slot (hidden for Premium subscribers)</div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="tag-row">
+              <span class="tag country">🇬🇧 United Kingdom</span>
+              <span class="tag fund-full">Full funding</span>
+            </div>
+            <h3>Chevening Scholarships</h3>
+            <div class="provider">UK Government — Foreign, Commonwealth &amp; Development Office</div>
+            <p class="desc">Fully funded one-year master's for future leaders, covering tuition, living costs and flights to the UK.</p>
+          </div>
+          <div class="match-ring">
+            <svg width="56" height="56" viewBox="0 0 56 56">
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--line)" stroke-width="5"/>
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-dasharray="150.8" stroke-dashoffset="30.2" stroke-linecap="round"/>
+            </svg>
+            <div class="pct">80%</div>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="deadline-block">
+            <div class="deadline-label"><span>Closes in <b>63 days</b></span><span>18 Nov 2026</span></div>
+            <div class="deadline-bar"><div class="deadline-fill ok" style="width:88%"></div></div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="Save">☆</button>
+            <a href="#" class="btn ghost">View details</a>
+          </div>
+        </div>
+        <button class="toggle-match" data-target="m2">Why does this match me? ▾</button>
+        <div class="match-detail" id="m2">
+          <div class="why">MATCH BREAKDOWN</div>
+          <div class="match-line yes"><span class="ico">✓</span> Requires 2 years' work experience — you're at 2.5 years</div>
+          <div class="match-line yes"><span class="ico">✓</span> IELTS 7.0 clears the 6.5 minimum requirement</div>
+          <div class="match-line no"><span class="ico">–</span> Three references required — none uploaded yet</div>
+          <div class="premium-note">Reference letter templates — Premium</div>
+        </div>
+      </div>
+
+      <!-- Card 3 - urgent -->
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <div class="tag-row">
+              <span class="tag country">🇳🇱 Netherlands</span>
+              <span class="tag fund-partial">Partial funding</span>
+            </div>
+            <h3>Holland Scholarship</h3>
+            <div class="provider">Dutch Ministry of Education &amp; participating universities</div>
+            <p class="desc">One-off €5,000 contribution toward tuition for non-EEA students starting a bachelor's or master's in the Netherlands.</p>
+          </div>
+          <div class="match-ring">
+            <svg width="56" height="56" viewBox="0 0 56 56">
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--line)" stroke-width="5"/>
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--amber)" stroke-width="5" stroke-dasharray="150.8" stroke-dashoffset="63.3" stroke-linecap="round"/>
+            </svg>
+            <div class="pct">58%</div>
+          </div>
+        </div>
+        <div class="card-bottom">
+          <div class="deadline-block">
+            <div class="deadline-label"><span>Closes in <b>9 days</b></span><span>13 Sep 2026</span></div>
+            <div class="deadline-bar"><div class="deadline-fill urgent" style="width:18%"></div></div>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="Save">☆</button>
+            <a href="#" class="btn ghost">View details</a>
+          </div>
+        </div>
+        <button class="toggle-match" data-target="m3">Why does this match me? ▾</button>
+        <div class="match-detail" id="m3">
+          <div class="why">MATCH BREAKDOWN</div>
+          <div class="match-line yes"><span class="ico">✓</span> Non-EEA nationality requirement met</div>
+          <div class="match-line no"><span class="ico">–</span> Requires an unconditional offer — yours is still conditional</div>
+          <div class="match-line no"><span class="ico">–</span> Application must go through your chosen university, not directly</div>
+          <div class="premium-note">Step-by-step application path — Premium</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="digest-card">
+    <div>
+      <h3>Get your Monday morning radar by email</h3>
+      <p>New matches, closing-soon reminders, and nothing you've already seen — delivered once a week.</p>
+    </div>
+    <a href="#" class="btn">Turn on weekly digest</a>
+  </div>
+  <div style="height:50px;"></div>
+</div>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.toggle-match').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = document.getElementById(btn.dataset.target);
+      el.classList.toggle('open');
+      btn.textContent = btn.textContent.includes('▾')
+        ? btn.textContent.replace('▾', '▴')
+        : btn.textContent.replace('▴', '▾');
+    });
+  });
+  document.querySelectorAll('.icon-btn').forEach(btn => {
+    if (btn.title === 'Save' || btn.title === 'Saved') {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('saved');
+        btn.textContent = btn.classList.contains('saved') ? '★' : '☆';
+        btn.title = btn.classList.contains('saved') ? 'Saved' : 'Save';
+      });
+    }
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  }
+</script>
+
+</body>
+</html>
