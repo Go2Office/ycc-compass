@@ -4,6 +4,7 @@ const APP_SHELL = [
   "/scholarship-radar.html",
   "/about-ycc.html",
   "/privacy-policy.html",
+  "/login.html",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png"
